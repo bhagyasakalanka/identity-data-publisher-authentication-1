@@ -38,7 +38,6 @@ import org.wso2.carbon.user.core.UserRealm;
 import org.wso2.carbon.user.core.UserStoreManager;
 import org.wso2.carbon.user.core.service.RealmService;
 import org.wso2.carbon.user.core.util.UserCoreUtil;
-import org.wso2.carbon.utils.multitenancy.MultitenantUtils;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -271,7 +270,6 @@ public class AnalyticsLoginDataPublishHandlerV110 extends AbstractEventHandler {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Retrieving groups for user " + userName + ", tenant domain " + tenantDomain);
         }
-        userName = MultitenantUtils.getTenantAwareUsername(userName);
         List<String> groups = new ArrayList<>();
         if (tenantDomain == null || userName == null) {
             return groups;
@@ -302,7 +300,8 @@ public class AnalyticsLoginDataPublishHandlerV110 extends AbstractEventHandler {
                 return groups;
             }
             // Multi-valued claims are joined by the user store's multi attribute separator.
-            groups.addAll(Arrays.asList(groupClaimValue.split(Pattern.quote(FrameworkUtils.getMultiAttributeSeparator()))));
+            groups.addAll(Arrays.asList(groupClaimValue.split(
+                    Pattern.quote(FrameworkUtils.getMultiAttributeSeparator()))));
         } catch (UserStoreException e) {
             LOG.error("Error when getting groups for " + userName + "@" + tenantDomain, e);
         }
